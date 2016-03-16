@@ -1,0 +1,203 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+	<script type="text/javascript" src="js/jquery.event.drag-2.0.js"></script>
+	<script src="http://192.168.102.135:4000/socket.io/socket.io.js"></script>
+	<script type="text/javascript" src="scripts.js"></script>
+	<link rel="stylesheet" href="style.css" />
+	<script type="text/javascript" src="ESToolKit.js"></script>
+	<script type="text/javascript" src="webtoolkit.aim.js"></script>
+	<style>
+body {  
+    margin: 0px;
+	padding:0px;
+}
+canvas {
+	margin: 0px;
+	padding:0px;
+	border-style: solid;
+    border-width: 1px;
+	border-color: green;
+	display: block;
+}
+video{
+ position:absolute;
+ top:0;
+ left:0;
+}
+div.fixposi {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 450;
+    height:60;
+    margin:0;
+    padding:0;
+    border: 1px solid #73AD21;
+    background-color: white;
+	z-index: 1000; 
+}
+div.center {
+ 	position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 450;
+    height:100;
+    margin:0;
+    padding:0;
+    border: 1px solid #73AD21;
+    background-color: white;
+    z-index: 1000; 
+}
+	</style>
+	<script>
+	function getOffset(obj){
+	var offsetLeft=0;
+	var offsetTop=0;
+	do{
+	if(!isNan(obj.offsetLeft)){offsetLeft+=obj.offsetLeft;}
+	if(!isNan(obj.offsettop)){offsetLeft+=obj.offsetTop;}
+	}while(obj=obj.offsetParent);
+	return {left:offsetLeft,top:offsetTop};
+	}
+function loginstartCallback() {
+		// make something useful before submit (onStart)
+		return true;
+}
+function logincompleteCallback(response) {
+		App.drawbg(response,0,0);
+		App.socket.emit('drawbgClick', {
+		x: response,
+		y: 0,
+		type: 0
+		});
+}	
+function videostartCallback() {
+		// make something useful before submit (onStart)
+		return true;
+}
+function videocompleteCallback(response) {
+		App.openMP4(response,0,0);
+		App.socket.emit('openMP4Click', {
+		x: response,
+		y: 0,
+		type: 0
+		});
+}	
+
+function close_msgbox(x) {
+        document.getElementById(x).style.display = "none";
+}
+
+	</script>
+<style>
+
+</style>
+	<title>HTML5 Canvas + Node.JS Socket.io</title>
+</head>
+<body>
+	<article><!-- our canvas will be inserted here--></article>
+	<hr>
+ <div class=fixposi>
+	<table valign=top>
+	<tr valign=top>
+	<td valign="top">
+	<input type="button" id="colorboxbtn" value="color">
+	<td valign="top">
+	<input type="button" id="clear" value="Clear">
+<!-- td valign="top">
+<form action="pngupload" enctype="multipart/form-data" method="POST" onSubmit="return AIM.submit(this, {'onStart' : loginstartCallback, 'onComplete' : logincompleteCallback})">
+<input type="file" name="upload" multiple="multiple">
+<input type="submit" value="PIC" />
+</form>
+<tr><td><td>
+<td valign="top">
+<form action="pngupload" enctype="multipart/form-data" method="POST" onSubmit="return AIM.submit(this, {'onStart' : videostartCallback, 'onComplete' : videocompleteCallback})">
+<input type="file" name="upload" multiple="multiple">
+<input type="submit" value="mp4" />
+</form>
+<td valign="top">
+	<input type="button" id="cloudico" value="cloudico(pending)">
+	<input type="button" id="videoico" value="videoico(pending)">
+	-->
+	</table>
+ </div>
+<script>
+    function selectColor(x){
+	   canvas_pencolor=x.value;	
+	}
+	$("#colorboxbtn" ).click(function() {
+			
+         document.getElementById("colorbox").style.display = "block";		
+	});
+	$("#videoico" ).click(function() {
+        video = document.getElementById("video");	 
+		video.style.display = "block";		
+         //processor.doLoad();
+});
+	$("#cloudico" ).click(function() {
+		var context=App.ctx;
+		context.beginPath();
+		context.moveTo(170, 80);
+		context.bezierCurveTo(130, 100, 130, 150, 230, 150);
+		context.bezierCurveTo(250, 180, 320, 180, 340, 150);
+		context.bezierCurveTo(420, 150, 420, 120, 390, 100);
+		context.bezierCurveTo(430, 40, 370, 30, 340, 50);
+		context.bezierCurveTo(320, 5, 250, 20, 250, 50);
+		context.bezierCurveTo(200, 5, 150, 20, 170, 80);
+		// complete custom shape
+		context.closePath();
+		context.lineWidth = 5;
+		context.strokeStyle = 'blue';
+		context.stroke();
+	});
+	 $("#clear" ).click(function() {
+		App.cleardraw(0,0,0);
+		if(penOpen){
+		App.socket.emit('cleardrawClick', {
+      x: 0,
+      y: 0,
+      type: 0
+			});
+		}
+     });
+	</script>
+<div id=colorbox class="center">
+  <p><b>COLORS: </b><span id=msgbox_txt></span>
+	<table valign=top>
+	<tr valign=top>
+	<td valign="top">
+	<input type="button"  value="red" onclick='selectColor(this);'>
+	<td valign="top">
+	<input type="button"  value="green"  onclick='selectColor(this);'>
+	<td valign="top">
+	<input type="button"  value="blue"  onclick='selectColor(this);'>
+	<td valign="top">
+	<input type="button"  value="black"  onclick='selectColor(this);'>
+	<td valign="top">
+	<input type="button"  value="orange"  onclick='selectColor(this);'>
+	<td valign="top">
+	<input type="button"  value="gray"  onclick='selectColor(this);'>
+	<td valign="top">
+	<input type="button"  value="white"  onclick='selectColor(this);'>
+	</table>  
+	<br>
+	<button onclick="close_msgbox('colorbox')">OK</button>
+  </p>
+  <P>
+  </P>
+</div>
+<div id=msgbox class="center">
+  <p><b>MSG: </b><span id=msgbox_txt></span></p>
+  <button onclick="close_msgbox('msgbox')">OK</button>
+  <br>I
+</div>
+<script>
+close_msgbox('msgbox');
+close_msgbox('colorbox');
+</script>
+<video id="video" src="#" controls="true" style="display:none;"/>
+</body>
+

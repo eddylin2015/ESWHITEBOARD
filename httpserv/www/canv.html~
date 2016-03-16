@@ -1,0 +1,107 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<style>
+	body {  
+    margin: 0px;
+	padding:0px;
+}
+canvas {
+	width:120px;
+	height:30px;
+	margin: 0px;
+	padding:0px;
+	border-style: solid;
+    border-width: 1px;
+	border-color: green;
+	display: block;
+}
+video{
+ position:absolute;
+ top:0;
+ left:0;
+}
+	</style>
+	<script>
+	function getOffset(obj){
+	var offsetLeft=0;
+	var offsetTop=0;
+	do{
+	if(!isNan(obj.offsetLeft)){offsetLeft+=obj.offsetLeft;}
+	if(!isNan(obj.offsettop)){offsetLeft+=obj.offsetTop;}
+	}while(obj=obj.offsetParent);
+	return {left:offsetLeft,top:offsetTop};
+	}
+	</script>
+<style>
+
+</style>
+	<title>HTML5 Canvas + Node.JS Socket.io</title>
+</head>
+<body>
+<table>
+	<tr><td>aa<td>
+        <input>
+
+	<tr><td>aa<td>		<canvas id=myCanvas>
+		</canvas>
+</table>
+	<hr>
+	<table valign=top>
+         <input type="button" id="redbtn" onclick='redbtn();'>
+	<input type="button" id="cloudico" value="cloudico(pending)">
+	<script>
+function redbtn(){
+	var arr=[
+	    [0,0,0],
+	    [0,0,0],
+	    [0,0,0],
+	    [0,0,0],
+	    [0,0,0]
+		    ];
+	var txt="477415477455477";
+
+	for(ti=0;ti<txt.length;ti++)
+	{
+		arr[Math.floor(ti / 3)][(ti % 3)]=Number(txt[ti]);
+	}
+	var c = document.getElementById("myCanvas");
+        var ctx = c.getContext("2d");
+        ctx.fillStyle = "green";
+	for(i=0;i<5;i++)
+	{
+	for(j=0;j<3;j++)
+	{    alert(arr[i][j]);
+	     if(arr[i][j] & 1){
+                 ctx.fillRect(j*70+0,i*20,20,20);
+	     }	     
+	     if(arr[i][j] & 2){
+                 ctx.fillRect(j*70+20,i*20,20,20);
+	     }
+	     if(arr[i][j] & 4){
+                 ctx.fillRect(j*70+40,i*20,20,20);
+	     }
+	}
+	}
+	}
+
+	function b() {
+
+		var context=App.ctx;
+		context.beginPath();
+		context.moveTo(170, 80);
+		context.bezierCurveTo(130, 100, 130, 150, 230, 150);
+		context.bezierCurveTo(250, 180, 320, 180, 340, 150);
+		context.bezierCurveTo(420, 150, 420, 120, 390, 100);
+		context.bezierCurveTo(430, 40, 370, 30, 340, 50);
+		context.bezierCurveTo(320, 5, 250, 20, 250, 50);
+		context.bezierCurveTo(200, 5, 150, 20, 170, 80);
+		// complete custom shape
+		context.closePath();
+		context.lineWidth = 5;
+		context.strokeStyle = 'blue';
+		context.stroke();
+	}
+	</script>
+</body>
+

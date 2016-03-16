@@ -1,0 +1,151 @@
+﻿<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+	<script type="text/javascript" src="js/jquery.event.drag-2.0.js"></script>
+	<script src="http://192.168.102.135:4000/socket.io/socket.io.js"></script>
+	<script type="text/javascript" src="scriptsm.js"></script>
+	<link rel="stylesheet" href="style.css" />
+	<script type="text/javascript" src="ESToolKit.js"></script>
+	<script type="text/javascript" src="webtoolkit.aim.js"></script>
+	<style>
+	input {
+	width:100%;
+	height:60px;
+	}
+	</style>
+	<script>
+
+	</script>
+<style>
+
+</style>
+	<title>HTML5 Canvas + Node.JS Socket.io</title>
+</head>
+<body>
+	<input type="button" id="upbtn" value="up>"><br>
+	<input type="button" id="downbtn" value="<down"><br>
+	<input type="button" id="bgbtn" value="bg"><br>
+	<input type="button" id="clipbtn" value="clip>"><br>
+	<input type="button" id="clipbtnd" value="<clip"><br>
+	<input type="button" id="clearbtn" value="clear"><br>
+	<input type="button" id="openpenbtn" value="openpen"><br>
+	<input type="button" id="lockpenbtn" value="lockpen"><br>
+<script>
+	$("#openpenbtn" ).click(function() {
+		App.socket.emit('penOpenCloseClick', {
+		x: true,
+		y: 0,
+		type: 0
+		});
+	});
+	$("#lockpenbtn" ).click(function() {
+		App.socket.emit('penOpenCloseClick', {
+		x: false,
+		y: 0,
+		type: 0
+		});
+	});	
+
+	$("#upbtn" ).click(function() {
+	   index++;
+	   if(index < 0) {index=0;}
+	   if(index >= ppt.length ) {index=ppt.length-1;}
+		App.socket.emit('drawbgClick', {
+		x: ppt[index],
+		y: 0,
+		type: 0
+		});
+	});
+	$("#downbtn" ).click(function() {
+	   index--;
+	   if(index<0) index=0;
+	   if(index>=ppt.length) index=ppt.length-1;
+		App.socket.emit('drawbgClick', {
+		 x: ppt[index],
+		y: 0,
+		type: 0
+		});
+
+	});
+	$("#bgbtn" ).click(function() {
+		App.socket.emit('drawbgClick', {
+		 x: ppt[index],
+		y: 0,
+		type: 0
+		});
+	});
+	
+	$("#clipbtn" ).click(function() {
+	    indexm++;
+		if(indexm<0) indexm=0;
+	   if(indexm>=mp4.length) indexm=mp4.length-1;
+   		App.socket.emit('openMP4Click', {
+		x: mp4[indexm],
+		y: 0,
+		type: 0
+		});
+});
+	$("#clipbtnd" ).click(function() {
+	    indexm--;
+		if(indexm<0) indexm=0;
+	   if(indexm>=mp4.length) indexm=mp4.length-1;
+   		App.socket.emit('openMP4Click', {
+		x: mp4[indexm],
+		y: 0,
+		type: 0
+		});
+});
+	 $("#clearbtn" ).click(function() {
+		//App.cleardraw(0,0,0);
+		App.socket.emit('cleardrawClick', {
+      x: 0,
+      y: 0,
+      type: 0
+    });
+     });
+	 var index=-1;
+	 var ppt=[];
+	 var indexm=-1;
+	 var mp4=[];
+	 var lenfilename=-1;
+	 function loadDoc() {
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+     	 //alert(xhttp.responseText);
+    if (xhttp.readyState == 4 && xhttp.status == 200) {
+	     var words =  xhttp.responseText.split('\n');
+     	 //alert(xhttp.responseText);
+		 cnt=0;
+		 mcnt=0;
+		 for(i=0;i<words.length;i++){
+		 //alert(words[i]);
+		 if( words[i].indexOf('.PNG') != -1 ){
+		 //alert(words[i]);
+		    if(lenfilename==-1){ lenfilename=words[i].length;}
+			//alert(words[i].substring(lenfilename-5,lenfilename-3));
+			var n = Number(words[i].substring(lenfilename-5,lenfilename-3));
+			if(isNaN(n) ) {
+				ppt[cnt]=words[i];
+			}else{
+				ppt[n]=words[i];
+			}
+			cnt++;
+		 }else if( words[i].indexOf('.mp4') != -1 ){
+			mp4[mcnt]=words[i];
+			mcnt++;
+		 }
+		 }
+     //document.getElementById("demo").innerHTML = xhttp.responseText;
+    }
+  };
+  xhttp.open("GET", "listtmpfiles", true);
+  xhttp.send();
+}
+loadDoc() ;
+</script>
+<article style="display:none;" ><!-- our canvas will be inserted here--></article>
+</body>
+

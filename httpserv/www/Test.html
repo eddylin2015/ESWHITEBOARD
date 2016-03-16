@@ -1,0 +1,60 @@
+﻿<!DOCTYPE html>
+<html>
+	<head>
+		<title>My Chat Room</title>
+		<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+		<script type="text/javascript">
+			$(function() {
+				if ("WebSocket" in window)
+				{
+					var url = "ws://localhost:1104";
+					//var url = "ws://192.168.102.135:4000";
+					var ws = new WebSocket(url);
+					ws.onopen = function()
+					{
+						alert("Connected");
+					};
+					ws.onmessage = function (evt) 
+					{ 
+						alert("Received")
+						var received_msg = evt.data;
+						$('#ChatContext').append(evt.data + "<br />");
+					};
+					ws.onclose = function()
+					{ 
+						alert("Closed"); 
+					}
+					ws.onerror = function()
+					{
+						alert("Error");
+					}
+					
+					$('#SendMsgBtn').click(function(event){
+						ws.send($('#MyInput').val());
+					});
+					
+					$('#CloseBtn').click(function(event){
+						ws.close();
+					});
+				}
+				else
+				{
+					alert("WebSocket NOT supported by your Browser!");
+				}
+			});
+
+		</script>
+	</head>
+	<body>
+		<div id="ChatContext">
+		</div>
+		<div>
+			<input type="text" id="MyInput" value="Type text here" />
+			<input type="button" id="SendMsgBtn" value="Send" />
+		</div>
+		<div>
+			<input type="button" id="CloseBBtn" value="Close" />
+		</div>
+	</body>
+	
+</html>
